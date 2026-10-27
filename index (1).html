@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KSA Expat Hub - Remittance & Services</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f4f8; color: #333; padding: 15px; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        
+        /* زبان اور نیویگیشن بار */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #e2e8f0; padding: 8px 12px; border-radius: 8px; }
+        .top-bar label { font-size: 11px; font-weight: bold; color: #475569; }
+        .top-bar select { width: auto; padding: 4px 8px; font-size: 12px; }
+
+        /* ٹیبز (دو پیجز کے لیے) */
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 10px; text-align: center; background: #e2e8f0; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; color: #475569; transition: 0.3s; }
+        .tab-btn.active { background: #1e3a8a; color: white; }
+
+        /* پیج سیکشنز */
+        .page-section { display: none; }
+        .page-section.active-page { display: block; }
+
+        h1 { font-size: 18px; color: #1e3a8a; text-align: center; margin-bottom: 5px; }
+        .subtitle { font-size: 12px; color: #64748b; text-align: center; margin-bottom: 20px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #1e293b; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; background: #f8fafc; }
+        input:focus, select:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        
+        .result-box { margin-top: 20px; background: #eff6ff; border: 1px solid #bfdbfe; padding: 15px; border-radius: 8px; }
+        .result-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: #334155; }
+        .result-item span:last-child { font-weight: bold; color: #1e3a8a; }
+        .highlight-result { border-top: 1px dashed #93c5fd; padding-top: 10px; margin-top: 10px; font-size: 15px !important; }
+        .highlight-result span:last-child { color: #16a34a !important; font-size: 17px; }
+
+        /* بزنس پیج کی اسٹائلنگ */
+        .offer-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+        .offer-card h3 { font-size: 16px; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .offer-card p { font-size: 13px; color: #475569; margin-bottom: 10px; line-height: 1.5; }
+        .badge { background: #dcfce7; color: #15803d; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-vpn { background: #fee2e2; color: #b91c1c; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        
+        .sim-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+        .sim-tag { background: #e2e8f0; color: #334155; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+
+        .whatsapp-btn { display: block; text-align: center; background: #22c55e; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(34, 197, 94, 0.3); margin-top: 15px; }
+    </style>
+</head>
+<body id="bodyTag">
+
+    <div class="container">
+        <!-- زبان بار -->
+        <div class="top-bar">
+            <label id="lblSelectLang">زبان / Language:</label>
+            <select id="langSelect" onchange="changeLanguage()">
+                <option value="ur">اردو</option>
+                <option value="hi">हिन्दी</option>
+                <option value="bn">বাংলা</option>
+                <option value="en">English</option>
+                <option value="ar">العربية</option>
+            </select>
+        </div>
+
+        <!-- ٹیبز کے بٹن (دو پیجز کے درمیان سوئچ کرنے کے لیے) -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" id="tabRemitBtn" onclick="switchTab('remit')">💰 ریٹ کیلकुلیٹر</button>
+            <button class="tab-btn" id="tabBizBtn" onclick="switchTab('biz')">🔥 خصوصی آفرز (SIM & VPN)</button>
+        </div>
+
+        <!-- ---------------- پیج 1: ریمیٹنس کیلکولیٹر ---------------- -->
+        <div id="remitPage" class="page-section active-page">
+            <h1 id="appTitle">KSA Remittance Hub</h1>
+            <p id="appSubtitle" class="subtitle">سعودی عرب سے اپنے ملک رقم بھیجنے کا بہترین موازنہ</p>
+
+            <div class="form-group">
+                <label id="lblSarAmount">سعودی ریال (SAR) درج کریں:</label>
+                <input type="number" id="sarAmount" placeholder="1000" value="1000" oninput="calculateRemittance()">
+            </div>
+
+            <div class="form-group">
+                <label id="lblCountry">منزل مقصود (ملک اور کرنسی):</label>
+                <select id="destCountry" onchange="updateProviders(); calculateRemittance();">
+                    <option value="PKR">Pakistan (PKR)</option>
+                    <option value="INR">India (INR)</option>
+                    <option value="BDT">Bangladesh (BDT)</option>
+                    <option value="PHP">Philippines (PHP)</option>
+                    <option value="EGP">Egypt (EGP)</option>
+                    <option value="NPR">Nepal (NPR)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label id="lblProvider">سروس / بینک کا انتخاب کریں:</label>
+                <select id="provider" onchange="calculateRemittance()"></select>
+            </div>
+
+            <div class="result-box">
+                <div class="result-item">
+                    <span id="resProviderLabel">منتخب کردہ بینک/والٹ:</span>
+                    <span id="providerNameDisplay">-</span>
+                </div>
+                <div class="result-item">
+                    <span id="resRateLabel">تخمینی ایکسچینج ریٹ:</span>
+                    <span id="rateDisplay">0</span>
+                </div>
+                <div class="result-item">
+                    <span id="resFeeLabel">منتقلی کی فیس:</span>
+                    <span id="feeDisplay">0 SAR</span>
+                </div>
+                <div class="result-item highlight-result">
+                    <span id="resFinalLabel">خاندان کو وصولی ہوگی:</span>
+                    <span id="finalDisplay">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ---------------- پیج 2: بزنس اور سروسز ہب (SIM & VPN) ---------------- -->
+        <div id="bizPage" class="page-section">
+            <h1 id="bizTitle">خصوصی ڈسکاؤنٹ اور ڈیجیٹل سروسز</h1>
+            <p id="bizSubtitle" class="subtitle">سعودی عرب میں بہترین ریٹس پر سستی خدمات حاصل کریں</p>
+
+            <!-- آفر 1: سم کارڈز -->
+            <div class="offer-card">
+                <h3>📶 <span id="simCardHeading">نئے سم کارڈز (پیکج پر ڈسکاؤنٹ)</span> <span class="badge" id="discountBadge">20% آف</span></h3>
+                <p id="simCardDesc">تمام بڑی سعودی ٹیلی کام کمپنیوں کے نئے سم کارڈز دستیاب ہیں۔ انٹرنیٹ اور کالنگ پیکجز پر خصوصی رعایت حاصل کریں!</p>
+                <div class="sim-tags">
+                    <span class="sim-tag">STC</span>
+                    <span class="sim-tag">Zain</span>
+                    <span class="sim-tag">Mobily</span>
+                    <span class="sim-tag">Red Bull</span>
+                    <span class="sim-tag">Salam</span>
+                </div>
+            </div>
+
+            <!-- آفر 2: وی پی این -->
+            <div class="offer-card">
+                <h3>🔒 <span id="vpnHeading">پریمیم وی پی این (VPN) سروس</span> <span class="badge-vpn" id="vpnBadge">صرف 15 SAR</span></h3>
+                <p id="vpnDesc">تیز رفتار اور محفوظ کنکشن جو ہر قسم کی کالنگ اور بلاک شدہ سروسز کے لیے بہترین کام کرتا ہے۔</p>
+            </div>
+
+            <!-- واٹس ایپ آرڈر بٹن -->
+            <a id="orderWhatsAppBtn" href="https://wa.me/966593686007?text=Hello,%20I%20want%20to%20order%20a%20SIM%20card%20or%20VPN." class="whatsapp-btn" target="_blank">💬 واٹس ایپ پر رابطہ کریں اور آرڈر کریں</a>
+        </div>
+
+    </div>
+
+    <script>
+        // زبانوں کے الفاظ
+        const translations = {
+            ur: {
+                selectLang: "زبان / Language:",
+                tabRemit: "💰 ریٹ کیلکولیٹر",
+                tabBiz: "🔥 خصوصی آفرز (SIM & VPN)",
+                title: "KSA Remittance Hub",
+                subtitle: "سعودی عرب سے اپنے ملک رقم بھیجنے کا بہترین موازنہ",
+                lblSar: "سعودی ریال (SAR) درج کریں:",
+                lblCountry: "منزل مقصود (ملک اور کرنسی):",
+                lblProvider: "سروس / بینک کا انتخاب کریں:",
+                resProv: "منتخب کردہ بینک/والٹ:",
+                resRate: "تخمینی ایکسچینج ریٹ:",
+                resFee: "منتقلی کی فیس:",
+                resFinal: "خاندان کو وصولی ہوگی:",
+                bizTitle: "خصوصی ڈسکاؤنٹ اور ڈیجیٹل سروسز",
+                bizSubtitle: "سعودی عرب میں بہترین ریٹس پر سستی خدمات حاصل کریں",
+                simHeading: "نئے سم کارڈز (پیکج پر ڈسکاؤنٹ)",
+                simBadge: "20% آف",
+                simDesc: "تمام بڑی سعودی ٹیلی کام کمپنیوں کے نئے سم کارڈز دستیاب ہیں۔ انٹرنیٹ اور کالنگ پیکجز پر خصوصی رعایت حاصل کریں!",
+                vpnHeading: "پریمیم وی پی این (VPN) سروس",
+                vpnBadge: "صرف 15 SAR",
+                vpnDesc: "تیز رفتار اور محفوظ کنکشن جو ہر قسم کی کالنگ اور بلاک شدہ سروسز کے لیے بہترین کام کرتا ہے۔",
+                waBtn: "💬 واٹس ایپ پر رابطہ کریں اور آرڈر کریں"
+            },
+            en: {
+                selectLang: "Language:",
+                tabRemit: "💰 Rate Calculator",
+                tabBiz: "🔥 Special Offers (SIM & VPN)",
+                title: "KSA Remittance Hub",
+                subtitle: "Best Comparison to Send Money from KSA",
+                lblSar: "Enter Saudi Riyal (SAR):",
+                lblCountry: "Destination Country & Currency:",
+                lblProvider: "Select Service / Bank:",
+                resProv: "Selected Bank/Wallet:",
+                resRate: "Estimated Exchange Rate:",
+                resFee: "Transfer Fee:",
+                resFinal: "Family Will Receive:",
+                bizTitle: "Special Discounts & Digital Services",
+                bizSubtitle: "Get best rates and services in Saudi Arabia",
+                simHeading: "New SIM Cards (Package Discount)",
+                simBadge: "20% OFF",
+                simDesc: "New SIM cards from all major Saudi telecom operators available. Get special discounts on internet and calling packages!",
+                vpnHeading: "Premium VPN Service",
+                vpnBadge: "Only 15 SAR",
+                vpnDesc: "High-speed and secure connection working perfectly for all calling apps and services.",
+                waBtn: "💬 Contact on WhatsApp & Order"
+            },
+            ar: {
+                selectLang: "اللغة:",
+                tabRemit: "💰 حاسبة التحويلات",
+                tabBiz: "🔥 عروض خاصة (شريحة و VPN)",
+                title: "KSA Remittance Hub",
+                subtitle: "أفضل مقارنة لتحويل الأموال من المملكة",
+                lblSar: "أدخل الريال السعودي (SAR):",
+                lblCountry: "بلد الوجهة والعملة:",
+                lblProvider: "اختر الخدمة / البنك:",
+                resProv: "البنك / المحفظة المختارة:",
+                resRate: "سعر الصرف التقديري:",
+                resFee: "رسوم التحويل:",
+                resFinal: "ستستلم العائلة إجمالي:",
+                bizTitle: "خصومات خاصة وخدمات رقمية",
+                bizSubtitle: "احصل على أفضل الخدمات والأسعار في السعودية",
+                simHeading: "شرائح اتصال جديدة (خصم على الباقات)",
+                simBadge: "خصم 20%",
+                simDesc: "شرائح اتصال جديدة لجميع شركات الاتصالات الكبرى في السعودية متاحة مع خصومات خاصة على باقات الإنترنت والمكالمات!",
+                vpnHeading: "خدمة VPN مميزة",
+                vpnBadge: "فقط 15 ريال",
+                vpnDesc: "اتصال عالي السرعة وآمن يعمل بشكل مثالي لجميع تطبيقات المكالمات والخدمات المحجوبة.",
+                waBtn: "💬 تواصل عبر واتساب واطلب الآن"
+            }
+        };
+
+        const exchangeData = {
+            PKR: { symbol: "PKR", providers: [{ name: "Al Rajhi / Enjaz", rate: 74.50, fee: 15 }, { name: "STC Pay", rate: 74.35, fee: 12 }, { name: "Urpay", rate: 74.60, fee: 10 }, { name: "Barq App", rate: 74.75, fee: 5 }] },
+            INR: { symbol: "INR", providers: [{ name: "Al Rajhi / Enjaz", rate: 22.40, fee: 15 }, { name: "STC Pay", rate: 22.35, fee: 12 }, { name: "Barq App", rate: 22.52, fee: 5 }] },
+            BDT: { symbol: "BDT", providers: [{ name: "Al Rajhi / Enjaz", rate: 31.80, fee: 15 }, { name: "STC Pay", rate: 31.75, fee: 12 }, { name: "Barq App", rate: 31.95, fee: 5 }] },
+            PHP: { symbol: "PHP", providers: [{ name: "Al Rajhi / Enjaz", rate: 15.20, fee: 15 }, { name: "STC Pay", rate: 15.15, fee: 12 }, { name: "Barq App", rate: 15.30, fee: 5 }] },
+            EGP: { symbol: "EGP", providers: [{ name: "Al Rajhi / Enjaz", rate: 13.10, fee: 20 }, { name: "STC Pay", rate: 13.05, fee: 15 }] },
+            NPR: { symbol: "NPR", providers: [{ name: "Al Rajhi / Enjaz", rate: 35.70, fee: 15 }, { name: "Barq App", rate: 35.85, fee: 5 }] }
+        };
+
+        // ٹیب سوئچ کرنے کا فنکشن
+        function switchTab(tabName) {
+            document.getElementById('remitPage').classList.remove('active-page');
+            document.getElementById('bizPage').classList.remove('active-page');
+            document.getElementById('tabRemitBtn').classList.remove('active');
+            document.getElementById('tabBizBtn').classList.remove('active');
+
+            if(tabName === 'remit') {
+                document.getElementById('remitPage').classList.add('active-page');
+                document.getElementById('tabRemitBtn').classList.add('active');
+            } else {
+                document.getElementById('bizPage').classList.add('active-page');
+                document.getElementById('tabBizBtn').classList.add('active');
+            }
+        }
+
+        function changeLanguage() {
+            let lang = document.getElementById('langSelect').value;
+            // اگر اردو یا عربی ہو تو دائیں سے بائیں، ورنہ بائیں سے دائیں
+            let t = translations[lang] || translations['en'];
+            
+            document.getElementById('htmlRoot').setAttribute('dir', (lang === 'en') ? 'ltr' : 'rtl');
+            document.getElementById('bodyTag').style.textAlign = (lang === 'en') ? 'left' : 'right';
+
+            document.getElementById('lblSelectLang').innerText = t.selectLang;
+            document.getElementById('tabRemitBtn').innerText = t.tabRemit;
+            document.getElementById('tabBizBtn').innerText = t.tabBiz;
+            document.getElementById('appTitle').innerText = t.title;
+            document.getElementById('appSubtitle').innerText = t.subtitle;
+            document.getElementById('lblSarAmount').innerText = t.lblSar;
+            document.getElementById('lblCountry').innerText = t.lblCountry;
+            document.getElementById('lblProvider').innerText = t.lblProvider;
+            document.getElementById('resProviderLabel').innerText = t.resProv;
+            document.getElementById('resRateLabel').innerText = t.resRate;
+            document.getElementById('resFeeLabel').innerText = t.resFee;
+            document.getElementById('resFinalLabel').innerText = t.resFinal;
+
+            // بزنس پیج کے ٹیکسٹ
+            document.getElementById('bizTitle').innerText = t.bizTitle;
+            document.getElementById('bizSubtitle').innerText = t.bizSubtitle;
+            document.getElementById('simCardHeading').innerText = t.simHeading;
+            document.getElementById('discountBadge').innerText = t.simBadge;
+            document.getElementById('simCardDesc').innerText = t.simDesc;
+            document.getElementById('vpnHeading').innerText = t.vpnHeading;
+            document.getElementById('vpnBadge').innerText = t.vpnBadge;
+            document.getElementById('vpnDesc').innerText = t.vpnDesc;
+            document.getElementById('orderWhatsAppBtn').innerText = t.waBtn;
+        }
+
+        function updateProviders() {
+            let countryKey = document.getElementById('destCountry').value;
+            let providerSelect = document.getElementById('provider');
+            providerSelect.innerHTML = "";
+
+            let countryInfo = exchangeData[countryKey];
+            countryInfo.providers.forEach((prov, index) => {
+                let opt = document.createElement('option');
+                opt.value = index;
+                opt.text = prov.name + ` (Fee: ${prov.fee} SAR)`;
+                providerSelect.appendChild(opt);
+            });
+        }
+
+        function calculateRemittance() {
+            let sar = parseFloat(document.getElementById('sarAmount').value) || 0;
+            let countryKey = document.getElementById('destCountry').value;
+            let providerIndex = document.getElementById('provider').value;
+
+            let countryInfo = exchangeData[countryKey];
+            let selectedProv = countryInfo.providers[providerIndex];
+
+            if (!selectedProv) return;
+
+            let rate = selectedProv.rate;
+            let fee = selectedProv.fee;
+            
+            let effectiveSAR = sar - fee;
+            if(effectiveSAR < 0) effectiveSAR = 0;
+            let finalAmount = effectiveSAR * rate;
+
+            document.getElementById('providerNameDisplay').innerText = selectedProv.name;
+            document.getElementById('rateDisplay').innerText = "1 SAR = " + rate + " " + countryInfo.symbol;
+            document.getElementById('feeDisplay').innerText = fee + " SAR";
+            document.getElementById('finalDisplay').innerText = finalAmount.toLocaleString('en-US', {maximumFractionDigits: 2}) + " " + countryInfo.symbol;
+        }
+
+        window.onload = function() {
+            changeLanguage();
+            updateProviders();
+            calculateRemittance();
+        };
+    </script>
+</body>
+</html>
